@@ -7,7 +7,7 @@ Ansible role and templates to deploy HashiCorp Vault (raft storage) with TLS. Te
 - Inventory describing `server` group and common variables (see example)
 - SSH access to targets (keys or other auth)
 - If you want to install enterprise, you need to put vaultpoc.hclic file under ansible role file directory.
-- You should create self-signed certificates to secure comminication netween raft nodes. Please look [CERT.MD](CERT.MD)
+- You should create self-signed certificates to secure comminication between raft nodes. Please look at [CERT.MD](CERT.MD)
 
 ## Inventory example
 ```ini
