@@ -1,0 +1,6 @@
+---
+- name: reload vault
+  service:
+    name: vault
+    state: reloaded
+    enabled: true

@@ -1,0 +1,3 @@
+---
+cluster_name: 'vault-cluster'
+enterprise: 'True'

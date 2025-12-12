@@ -1,0 +1,55 @@
+---
+
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Install Vault.
+  package:
+    name: "{{ enterprise | bool | ternary('vault-enterprise', 'vault') }}"
+    state: present
+  
+- name: Copy a licence file to remote
+  ansible.builtin.copy:
+    src: vaultpoc.hclic   
+    dest: /etc/vault.d/vaultpoc.hclic
+    owner: vault
+    group: vault
+    mode: '0640'
+  when: enterprise | default(false) | bool
+
+- name: Copy a tls files to remote
+  ansible.builtin.copy:
+    src: "{{ item }}"    
+    dest: "/opt/vault/tls/{{ item }}"   
+    owner: vault
+    group: vault
+    mode: '0640'
+  loop:
+    - vault.key
+    - vault.crt
+    - myvault-ca.crt
+  notify: reload vault
+
+- name: Configure Vault.
+  template:
+    src: "{{ item | basename }}.j2"
+    dest: "{{ item }}"
+    owner: root
+    group: vault
+    mode: 0640
+  with_items:
+    - /etc/vault.d/vault.hcl
+  notify: reload vault
+
+- name: Force a restart if configuration has changed.
+  meta: flush_handlers
+
+- name: Make sure Vault is running before proceeding.
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "8200"
+    delay: 3
+    timeout: 300

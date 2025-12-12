@@ -1,0 +1,41 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: BUSL-1.1
+
+# Full configuration options can be found at https://developer.hashicorp.com/vault/docs/configuration
+
+cluster_addr  = "https://{{ inventory_hostname }}:8201"
+api_addr      = "https://{{ inventory_hostname }}:8200"
+disable_mlock = true
+
+ui = true
+
+#mlock = true
+#disable_mlock = true
+
+storage "raft" {
+  path = "/opt/vault/data"
+  node_id = "{{ inventory_hostname }}"
+
+{% for host in groups['server'] %}
+  retry_join {
+    leader_api_addr         = "https://{{ host }}:8200"
+    leader_ca_cert_file     = "/opt/vault/tls/myvault-ca.crt"
+    leader_client_cert_file = "/opt/vault/tls/vault.crt"
+    leader_client_key_file  = "/opt/vault/tls/vault.key"
+  }
+{% endfor %}
+
+}
+
+# HTTPS listener
+listener "tcp" {
+  address       = "0.0.0.0:8200"
+  tls_cert_file = "/opt/vault/tls/vault.crt"
+  tls_key_file  = "/opt/vault/tls/vault.key"
+  tls_client_ca_file = "/opt/vault/tls/myvault-ca.crt"
+}
+
+{% if enterprise %}
+license_path = "/etc/vault.d/vaultpoc.hclic"
+
+{% endif %}
