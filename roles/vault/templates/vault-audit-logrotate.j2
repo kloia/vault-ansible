@@ -1,0 +1,12 @@
+{{ vault_audit_log_path }} {
+    {{ vault_audit_log_rotate_frequency }}
+    rotate {{ vault_audit_log_rotate_count }}
+{% if vault_audit_log_compress %}
+    compress
+    delaycompress
+{% endif %}
+    missingok
+    notifempty
+    copytruncate
+    create 0640 vault vault
+}

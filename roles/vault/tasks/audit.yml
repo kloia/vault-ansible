@@ -1,0 +1,43 @@
+---
+# --- file audit ---
+
+- name: Create Vault audit log directory.
+  ansible.builtin.file:
+    path: "{{ vault_audit_log_dir }}"
+    state: directory
+    owner: vault
+    group: vault
+    mode: '0750'
+  when: file_audit_enabled | bool
+
+- name: Create Vault audit log file if not present.
+  ansible.builtin.file:
+    path: "{{ vault_audit_log_path }}"
+    state: touch
+    owner: vault
+    group: vault
+    mode: '0640'
+    modification_time: preserve
+    access_time: preserve
+  when: file_audit_enabled | bool
+
+- name: Install Vault audit log rotation config.
+  ansible.builtin.template:
+    src: vault-audit-logrotate.j2
+    dest: /etc/logrotate.d/vault-audit
+    owner: root
+    group: root
+    mode: '0644'
+  when: file_audit_enabled | bool
+
+# --- syslog audit ---
+
+- name: Install Vault rsyslog config.
+  ansible.builtin.template:
+    src: vault-rsyslog.j2
+    dest: /etc/rsyslog.d/30-vault.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: vault_syslog_enabled | bool
+  notify: restart rsyslog

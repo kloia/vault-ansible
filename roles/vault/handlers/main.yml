@@ -4,3 +4,8 @@
     name: vault
     state: reloaded
     enabled: true
+
+- name: restart rsyslog
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted

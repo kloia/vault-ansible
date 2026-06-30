@@ -44,6 +44,9 @@
     - /etc/vault.d/vault.hcl
   notify: reload vault
 
+- name: Configure audit log directory and rotation.
+  include_tasks: audit.yml
+
 - name: Force a restart if configuration has changed.
   meta: flush_handlers
 

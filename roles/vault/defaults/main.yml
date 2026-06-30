@@ -1,0 +1,10 @@
+---
+file_audit_enabled: false
+vault_syslog_enabled: false
+vault_syslog_server: ""
+
+vault_audit_log_dir: /var/log/vault
+vault_audit_log_path: /var/log/vault/vault_audit.log
+vault_audit_log_rotate_frequency: daily
+vault_audit_log_rotate_count: 30
+vault_audit_log_compress: true

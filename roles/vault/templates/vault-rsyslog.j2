@@ -1,0 +1,4 @@
+# Vault audit logs using LOCAL0 facility
+{% if vault_syslog_server != "" %}
+local0.*    @@{{ vault_syslog_server }}:514
+{% endif %}
